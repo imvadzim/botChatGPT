@@ -1,16 +1,31 @@
-# This is a sample Python script.
+# This is a simple Chat GPT bot.
+# You need to install telebot and openai libraries
+# pip install pyTelegramBotApi
+# pip install openai
+import telebot
+import openai
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Set up your OpenAI API key
+openai.api_key = "<OpenAI API key>"
 
+# Create a new Telegram bot
+bot = telebot.TeleBot("<the bot token>")
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Define a function to handle incoming messages
+@bot.message_handler(func=lambda message: True)
+def answer_question(message):
+    # Use the OpenAI API to generate a response to the user's question
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=message.text,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
 
+    # Send the response back to the user
+    bot.send_message(message.chat.id, response.choices[0].text)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# Start the bot
+bot.polling()
